@@ -23,9 +23,9 @@ int main(void) {
   int numrv;
 
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
-  printf("socket retrieve success\n");
-  memset(&serv_addr, '0', sizeof(serv_addr));
-  memset(sendBuff, '0', sizeof(sendBuff));
+  printf("server is running successfully\n");
+  memset(&serv_addr, 0, sizeof(serv_addr));
+  memset(sendBuff, 0, sizeof(sendBuff));
 
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -40,23 +40,52 @@ int main(void) {
 
   while(1) {
     connfd = accept(listenfd, (struct sockaddr*)NULL ,NULL); // accept awaiting request
-    strcpy(sendBuff, "I am a guilty cat");
-    printf("derp\n");
+    strcpy(sendBuff, "Server acknowledges client connection. Game initiated."); 
     write(connfd, sendBuff, strlen(sendBuff));
     int n;
-    while((n = read(listenfd, recvBuff, sizeof(recvBuff)-1)) > 0) {
+    while((n = read(connfd, recvBuff, sizeof(recvBuff)-1)) > 0) {
       recvBuff[n] = 0; //terminate message line at the end of the string
-      if(fputs(recvBuff, stdout) == EOF) printf("\n Error : Fputs error");
-      //write() to send buffer in order to transmit new message
+      int serverToss = rand() %2;
+      //if serverToss is 0 then is S
+      //if serverToss is 1 then is B
 
-     /* if (strcmp (recvBuff, "I am a guilty cat") == 0) {
-        strcpy(sendBuff, "Prison sentence is nine consecutive life terms");
-        write(sockfd, sendBuff, sizeof(sendBuff)-1);
+
+      if(fputs(recvBuff, stdout) == EOF) printf("\n Error : Fputs error");
+
+      //printf("%s\n", recvBuff);
+
+      if (recvBuff[0] == 'S' && serverToss == 0) //both are silent
+      {
+        strcpy(sendBuff, "Both prisoners spend 1 years in jail.");
       }
-      printf("\n");
-      */
+     
+      else if (recvBuff[0] == 'S' && serverToss == 1) // A is silent, B betrays
+      {
+        strcpy(sendBuff, "Prisoner A spends 3 years in jail, prisoner B goes free.");
+      }
+
+      else if (recvBuff[0] == 'B' && serverToss == 0) // A betrays, B stays silent
+      {
+        strcpy(sendBuff, "Prisoner B spends 3 years in jail, prisoner A goes free.");
+      }
+
+      else if (recvBuff[0] == 'B' && serverToss == 1) //both betray
+      {
+        strcpy(sendBuff, "Both prisoners spend 2 years in jail.");
+      }
+
+      else {
+        strcpy(sendBuff, "Wrong input, please try again.");
+      }
+
+      write(connfd, sendBuff, sizeof(sendBuff)-1);
+      memset(recvBuff, 0, sizeof(recvBuff));
+      memset(sendBuff, 0, sizeof(sendBuff));
+
+
     }
-    close(connfd);
+
+   close(connfd);
     sleep(1);
   }
   return 0;

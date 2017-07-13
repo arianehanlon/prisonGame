@@ -23,8 +23,10 @@ int main(void) {
   char sendBuff[1024]; //buffer used to contain messages sent to server
   char recvBuff[1024];
   struct sockaddr_in serv_addr;
+  char inputBuff[1024];
 
-  memset(recvBuff, '0' ,sizeof(recvBuff));
+  memset(recvBuff, 0 ,sizeof(recvBuff));
+  memset (inputBuff, 0 ,sizeof(inputBuff));
 
   if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0) {
     printf("\n Error : Could not create socket \n");
@@ -43,12 +45,17 @@ int main(void) {
   while((n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0) {
     recvBuff[n] = 0; //terminate message line at the end of the string
     printf("...%s....\n", recvBuff);
-    if(fputs(recvBuff, stdout) == EOF) printf("\n Error : Fputs error");
-      //write() to send buffer in order to transmit new message
-    if (strcmp (recvBuff, "I am a guilty cat") == 0) {
-      strcpy(sendBuff, "Prison sentence is nine consecutive life terms");
-      write(sockfd, sendBuff, sizeof(sendBuff)-1);
-    }
+    printf("\n Enter decision (S or B) or enter 'x' to quit: ");
+    fgets(inputBuff, sizeof (inputBuff) -1, stdin);
+
+    if (inputBuff[0] == 'x') {break;}
+
+    strcpy(sendBuff, inputBuff);
+    write(sockfd, sendBuff, sizeof(sendBuff)-1);
+
+    memset(recvBuff, 0 ,sizeof(recvBuff)); //reset buffer
+    memset (inputBuff, 0 ,sizeof(inputBuff)); //reset buffer
+    
     printf("\n");
   }
 
