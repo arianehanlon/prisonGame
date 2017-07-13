@@ -18,15 +18,14 @@
 int main(void) {
   int listenfd = 0,connfd = 0;
   struct sockaddr_in serv_addr;
-  char sendBuff[1025];
-  char recvBuff[1025];
-  int numrv;
+  char sendBuff[1024];
+  char recvBuff[1024];
 
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
-  printf("server is running successfully\n");
-  memset(&serv_addr, 0, sizeof(serv_addr));
-  memset(sendBuff, 0, sizeof(sendBuff));
-
+  printf("SELF: socket retrieve success\n");
+  memset(&serv_addr, '0', sizeof(serv_addr));
+  memset(sendBuff, '0', sizeof(sendBuff));
+  memset(recvBuff, '0', sizeof(recvBuff));
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   serv_addr.sin_port = htons(5000);
@@ -40,7 +39,8 @@ int main(void) {
 
   while(1) {
     connfd = accept(listenfd, (struct sockaddr*)NULL ,NULL); // accept awaiting request
-    strcpy(sendBuff, "Server acknowledges client connection. Game initiated."); 
+    strcpy(sendBuff, "Server acknowledges client connection. Game initiated.");
+    printf("SELF: connection to %d initiated\n", listenfd);
     write(connfd, sendBuff, strlen(sendBuff));
     int n;
     while((n = read(connfd, recvBuff, sizeof(recvBuff)-1)) > 0) {
@@ -58,7 +58,7 @@ int main(void) {
       {
         strcpy(sendBuff, "Both prisoners spend 1 years in jail.");
       }
-     
+
       else if (recvBuff[0] == 'S' && serverToss == 1) // A is silent, B betrays
       {
         strcpy(sendBuff, "Prisoner A spends 3 years in jail, prisoner B goes free.");
@@ -81,12 +81,7 @@ int main(void) {
       write(connfd, sendBuff, sizeof(sendBuff)-1);
       memset(recvBuff, 0, sizeof(recvBuff));
       memset(sendBuff, 0, sizeof(sendBuff));
-
-
-    }
-
-   close(connfd);
-    sleep(1);
   }
+}
   return 0;
 }

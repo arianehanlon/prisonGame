@@ -55,7 +55,7 @@ int main(void) {
 
     memset(recvBuff, 0 ,sizeof(recvBuff)); //reset buffer
     memset (inputBuff, 0 ,sizeof(inputBuff)); //reset buffer
-    
+
     printf("\n");
   }
 
