@@ -45,38 +45,15 @@ int main(void) {
     int n;
     while((n = read(connfd, recvBuff, sizeof(recvBuff)-1)) > 0) {
       recvBuff[n] = 0; //terminate message line at the end of the string
-      int serverToss = rand() %2;
-      //if serverToss is 0 then is S
-      //if serverToss is 1 then is B
-
+      int serverToss = rand() %2; //if serverToss is 0 then is S -- if serverToss is 1 then is B
 
       if(fputs(recvBuff, stdout) == EOF) printf("\n Error : Fputs error");
 
-      //printf("%s\n", recvBuff);
-
-      if (recvBuff[0] == 'S' && serverToss == 0) //both are silent
-      {
-        strcpy(sendBuff, "Both prisoners spend 1 years in jail.");
-      }
-
-      else if (recvBuff[0] == 'S' && serverToss == 1) // A is silent, B betrays
-      {
-        strcpy(sendBuff, "Prisoner A spends 3 years in jail, prisoner B goes free.");
-      }
-
-      else if (recvBuff[0] == 'B' && serverToss == 0) // A betrays, B stays silent
-      {
-        strcpy(sendBuff, "Prisoner B spends 3 years in jail, prisoner A goes free.");
-      }
-
-      else if (recvBuff[0] == 'B' && serverToss == 1) //both betray
-      {
-        strcpy(sendBuff, "Both prisoners spend 2 years in jail.");
-      }
-
-      else {
-        strcpy(sendBuff, "Wrong input, please try again.");
-      }
+      if (recvBuff[0] == 'S' && serverToss == 0) strcpy(sendBuff, "Both prisoners spend 1 years in jail.");
+      else if (recvBuff[0] == 'S' && serverToss == 1) strcpy(sendBuff, "Prisoner A spends 3 years in jail, prisoner B goes free.");
+      else if (recvBuff[0] == 'B' && serverToss == 0) strcpy(sendBuff, "Prisoner B spends 3 years in jail, prisoner A goes free.");
+      else if (recvBuff[0] == 'B' && serverToss == 1) strcpy(sendBuff, "Both prisoners spend 2 years in jail.");
+      else strcpy(sendBuff, "Wrong input, please try again.");
 
       write(connfd, sendBuff, sizeof(sendBuff)-1);
       memset(recvBuff, 0, sizeof(recvBuff));
