@@ -49,10 +49,14 @@ int main(void) {
 
       if(fputs(recvBuff, stdout) == EOF) printf("\n Error : Fputs error");
 
-      if (recvBuff[0] == 'S' && serverToss == 0) strcpy(sendBuff, "Both prisoners spend 1 years in jail.");
-      else if (recvBuff[0] == 'S' && serverToss == 1) strcpy(sendBuff, "Prisoner A spends 3 years in jail, prisoner B goes free.");
-      else if (recvBuff[0] == 'B' && serverToss == 0) strcpy(sendBuff, "Prisoner B spends 3 years in jail, prisoner A goes free.");
-      else if (recvBuff[0] == 'B' && serverToss == 1) strcpy(sendBuff, "Both prisoners spend 2 years in jail.");
+      if (recvBuff[0] == 'S' && serverToss == 0)
+          strcpy(sendBuff, "Server(B) chose \"S\", Client(A) chose \"S\" => Both prisoners spend 1 years in jail.");
+      else if (recvBuff[0] == 'S' && serverToss == 1)
+          strcpy(sendBuff, "Server(B) chose \"B\", Client(A) chose \"S\" => Prisoner A spends 3 years in jail, prisoner B goes free.");
+      else if (recvBuff[0] == 'B' && serverToss == 0)
+          strcpy(sendBuff, "Server(B) chose \"S\", Client(A) chose \"B\" => Prisoner B spends 3 years in jail, prisoner A goes free.");
+      else if (recvBuff[0] == 'B' && serverToss == 1)
+          strcpy(sendBuff, "Server(B) chose \"B\", Client(A) chose \"B\" => Both prisoners spend 2 years in jail.");
       else strcpy(sendBuff, "Wrong input, please try again.");
 
       write(connfd, sendBuff, sizeof(sendBuff)-1);
